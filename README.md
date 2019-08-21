@@ -109,6 +109,7 @@ We'll add the following to the `ship` action after line 31:
 That should be enough set up to start adding our shipment business rules.
 
 1. Inside the orders#ship controller action, create a variable named `shippable`. `shippable` will be `true` if the order is not marked as shipped *and* there is at least 1 product in the order. Otherwise, `shippable` should be `false`.
+
 2. Make sure you implement the following response handling using the `shippable` variable and the result of `update(status: "shipped")`
 
    - If an order is shippable (see definition above)
@@ -127,9 +128,6 @@ Be sure to commit your work at this stage before moving on, we'll be refactoring
 Now our `orders#ship` controller action is doing work that isn't the controller's responsibility. We want to keep our controllers light weight and focused on handling requests and responses by coordinating with models and views (for our API, the view is just json rendering). Ideally, the products query, `shippable` boolean, and the status update will be the model's responsibility.
 
 1. On the `Order` model, create the following:
-   - Create a `products` instance method on the order model that performs the products query and returns the list of the order's products.
-   - Create a `shippable?` instance method on the order model that checks whether the order has been shipped and if there are any products.
-   - Create a `ship` instance method on the order model that checks if the order is `shippable?` and marks the order as shipped; it should return `true` if both conditions pass and `false` otherwise.
 2. Refactor the controller code to simply call `ship` on the model
 
 When you are done, the `ship` controller action should look quite similar to the simple `create` controller action.

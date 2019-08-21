@@ -27,11 +27,20 @@ module Api
         end
       end
 
+      # if @order.update(status: "shipped") 
+
+
       def ship
         @order = Order.find(params[:id])
+        product_ids = OrderProduct.where(order_id: params[:id]).pluck(:product_id)
+        @products = Product.find(product_ids)
+        shippable = false
 
-        if @order.update(status: "shipped")
-          render json: @order, status: :ok, location: api_v1_order_url(@order)
+        if @order.status === "pending" && @products.length > 0 && @order.update(status:"shipped")
+          shippable = true
+          render json: {order: @order, message: "what is happening"}
+        elsif @order.status != "pending"
+          render json: { message: "There was a problem shipping your order."}
         else
           render json: @order.errors, status: :unprocessable_entity
         end
