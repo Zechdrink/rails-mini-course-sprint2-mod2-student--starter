@@ -27,24 +27,35 @@ module Api
         end
       end
 
-      # if @order.update(status: "shipped") 
-
-
       def ship
         @order = Order.find(params[:id])
-        product_ids = OrderProduct.where(order_id: params[:id]).pluck(:product_id)
-        @products = Product.find(product_ids)
-        shippable = false
 
-        if @order.status === "pending" && @products.length > 0 && @order.update(status:"shipped")
-          shippable = true
-          render json: {order: @order, message: "what is happening"}
-        elsif @order.status != "pending"
-          render json: { message: "There was a problem shipping your order."}
+        if @order.ship
+          render json: {order: @order, status: :ok, message: "Congrats on shipping your order."}
+        elsif @order.status == "shipped"
+          render json:  {message: "Your order has already been shipped."}
         else
-          render json: @order.errors, status: :unprocessable_entity
+          render json: {message: "Problem shipping your order"}, status: :unprocessable_entity
         end
       end
+
+
+      # def ship
+      #   @order = Order.find(params[:id])
+      #   product_ids = OrderProduct.where(order_id: params[:id]).pluck(:product_id)
+      #   @products = Product.find(product_ids)
+      #   shippable = false
+
+      #   if @order.status === "pending" && @products.length > 0 && @order.update(status:"shipped")
+      #     shippable = true
+      #     render json: {order: @order, message: "what is happening"}
+      #   elsif @order.status != "pending"
+      #     render json: { message: "There was a problem shipping your order."}
+      #   else
+      #     render json: @order.errors, status: :unprocessable_entity
+      #   end
+      # end
+    
     end
   end
 end
